@@ -1,30 +1,46 @@
-<div class="card task-card p-3 {% if task.due_date < today and task.status != 'DONE' %}border-danger border-2{% endif %}">
-    <div class="d-flex justify-content-between mb-2">
-        <span class="badge badge-priority-{{ task.priority }} px-2 py-1 rounded-pill" style="font-size: 0.75rem;">
+<div class="card task-card p-3 mb-3 priority-{{ task.priority }}">
+    <div class="d-flex justify-content-between align-items-start mb-2">
+        <span class="badge rounded-pill fw-normal 
+            {% if task.priority == 'HIGH' %}bg-danger-subtle text-danger
+            {% elif task.priority == 'MEDIUM' %}bg-warning-subtle text-warning-emphasis
+            {% else %}bg-success-subtle text-success{% endif %}" style="font-size: 0.7rem;">
             {{ task.get_priority_display }}
         </span>
-        <div>
-            <a href="{% url 'update_task' task.pk %}" class="text-muted me-2" title="Edit"><i class="fas fa-pen"></i></a>
-            <a href="{% url 'delete_task' task.pk %}" class="text-muted" onclick="return confirm('Delete this task?');" title="Delete"><i class="fas fa-trash"></i></a>
+        
+        <div class="dropdown">
+            <button class="btn btn-link text-muted p-0 no-arrow" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                <li><a class="dropdown-item small" href="{% url 'update_task' task.pk %}"><i class="fas fa-pen me-2 text-primary"></i> Edit</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item small text-danger" href="{% url 'delete_task' task.pk %}" onclick="return confirm('Delete this task?');"><i class="fas fa-trash me-2"></i> Delete</a></li>
+            </ul>
         </div>
     </div>
-    <h6 class="fw-bold mb-1">{{ task.title }}</h6>
-    <p class="text-muted small mb-3">{{ task.description|truncatechars:50 }}</p>
-    
-    {% if task.due_date < today and task.status != 'DONE' %}
-        <p class="text-danger small fw-bold mb-1"><i class="fas fa-exclamation-circle"></i> Overdue</p>
-    {% endif %}
 
-    <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
-        <div class="text-muted small"><i class="far fa-clock me-1"></i> {{ task.due_date|date:"M d" }}</div>
-        
-        <div>
+    <h6 class="fw-bold mb-1 text-dark">{{ task.title }}</h6>
+    <p class="text-muted small mb-3" style="font-size: 0.85rem; line-height: 1.4;">{{ task.description|truncatechars:60 }}</p>
+
+    <div class="d-flex justify-content-between align-items-center pt-2 mt-auto border-top border-light">
+        <div class="text-muted small d-flex align-items-center {% if task.due_date < today and task.status != 'DONE' %}text-danger fw-bold{% endif %}">
+            <i class="far fa-calendar-alt me-1"></i> 
+            {{ task.due_date|date:"M d" }}
+        </div>
+
+        <div class="d-flex gap-1">
             {% if task.status == 'TODO' %}
-                <a href="{% url 'change_status' task.pk 'DOING' %}" class="btn btn-sm btn-outline-primary py-0" style="font-size: 0.75rem;">Start</a>
+                <a href="{% url 'change_status' task.pk 'DOING' %}" class="btn btn-sm btn-light text-primary rounded-circle" title="Start Task" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-play" style="font-size: 0.7rem;"></i>
+                </a>
             {% elif task.status == 'DOING' %}
-                <a href="{% url 'change_status' task.pk 'DONE' %}" class="btn btn-sm btn-outline-success py-0" style="font-size: 0.75rem;">Done</a>
+                <a href="{% url 'change_status' task.pk 'DONE' %}" class="btn btn-sm btn-light text-success rounded-circle" title="Mark Done" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-check" style="font-size: 0.8rem;"></i>
+                </a>
             {% elif task.status == 'DONE' %}
-                 <a href="{% url 'change_status' task.pk 'TODO' %}" class="text-muted" title="Reopen"><i class="fas fa-undo small"></i></a>
+                 <a href="{% url 'change_status' task.pk 'TODO' %}" class="btn btn-sm btn-light text-secondary rounded-circle" title="Reopen" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-undo" style="font-size: 0.7rem;"></i>
+                </a>
             {% endif %}
         </div>
     </div>
