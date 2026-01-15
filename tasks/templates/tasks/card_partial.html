@@ -1,17 +1,31 @@
-<div class="card task-card p-3">
+<div class="card task-card p-3 {% if task.due_date < today and task.status != 'DONE' %}border-danger border-2{% endif %}">
     <div class="d-flex justify-content-between mb-2">
         <span class="badge badge-priority-{{ task.priority }} px-2 py-1 rounded-pill" style="font-size: 0.75rem;">
             {{ task.get_priority_display }}
         </span>
-        <a href="{% url 'delete_task' task.pk %}" class="text-muted" onclick="return confirm('Delete this task?');"><i class="fas fa-trash"></i></a>
+        <div>
+            <a href="{% url 'update_task' task.pk %}" class="text-muted me-2" title="Edit"><i class="fas fa-pen"></i></a>
+            <a href="{% url 'delete_task' task.pk %}" class="text-muted" onclick="return confirm('Delete this task?');" title="Delete"><i class="fas fa-trash"></i></a>
+        </div>
     </div>
     <h6 class="fw-bold mb-1">{{ task.title }}</h6>
     <p class="text-muted small mb-3">{{ task.description|truncatechars:50 }}</p>
+    
+    {% if task.due_date < today and task.status != 'DONE' %}
+        <p class="text-danger small fw-bold mb-1"><i class="fas fa-exclamation-circle"></i> Overdue</p>
+    {% endif %}
+
     <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
         <div class="text-muted small"><i class="far fa-clock me-1"></i> {{ task.due_date|date:"M d" }}</div>
-        {% if task.status == 'TODO' %} <span class="badge bg-secondary rounded-circle p-1"> </span>
-        {% elif task.status == 'DOING' %} <span class="badge bg-primary rounded-circle p-1"> </span>
-        {% else %} <span class="badge bg-success rounded-circle p-1"> </span>
-        {% endif %}
+        
+        <div>
+            {% if task.status == 'TODO' %}
+                <a href="{% url 'change_status' task.pk 'DOING' %}" class="btn btn-sm btn-outline-primary py-0" style="font-size: 0.75rem;">Start</a>
+            {% elif task.status == 'DOING' %}
+                <a href="{% url 'change_status' task.pk 'DONE' %}" class="btn btn-sm btn-outline-success py-0" style="font-size: 0.75rem;">Done</a>
+            {% elif task.status == 'DONE' %}
+                 <a href="{% url 'change_status' task.pk 'TODO' %}" class="text-muted" title="Reopen"><i class="fas fa-undo small"></i></a>
+            {% endif %}
+        </div>
     </div>
 </div>
