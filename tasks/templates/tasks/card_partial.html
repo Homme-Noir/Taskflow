@@ -1,0 +1,17 @@
+<div class="card task-card p-3">
+    <div class="d-flex justify-content-between mb-2">
+        <span class="badge badge-priority-{{ task.priority }} px-2 py-1 rounded-pill" style="font-size: 0.75rem;">
+            {{ task.get_priority_display }}
+        </span>
+        <a href="{% url 'delete_task' task.pk %}" class="text-muted" onclick="return confirm('Delete this task?');"><i class="fas fa-trash"></i></a>
+    </div>
+    <h6 class="fw-bold mb-1">{{ task.title }}</h6>
+    <p class="text-muted small mb-3">{{ task.description|truncatechars:50 }}</p>
+    <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+        <div class="text-muted small"><i class="far fa-clock me-1"></i> {{ task.due_date|date:"M d" }}</div>
+        {% if task.status == 'TODO' %} <span class="badge bg-secondary rounded-circle p-1"> </span>
+        {% elif task.status == 'DOING' %} <span class="badge bg-primary rounded-circle p-1"> </span>
+        {% else %} <span class="badge bg-success rounded-circle p-1"> </span>
+        {% endif %}
+    </div>
+</div>
