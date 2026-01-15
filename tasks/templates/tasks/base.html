@@ -14,17 +14,20 @@
             padding-top: 20px;
             position: fixed;
             width: 250px;
+            display: flex;
+            flex-direction: column;
         }
-        .sidebar a { color: #b0c4de; text-decoration: none; padding: 10px 20px; display: block; }
+        .sidebar-brand { text-align: center; margin-bottom: 2rem; }
+        .sidebar a { color: #b0c4de; text-decoration: none; padding: 12px 20px; display: block; }
         .sidebar a:hover, .sidebar a.active { background: #34495e; color: white; border-left: 4px solid #3498db; }
+        .sidebar-footer { margin-top: auto; padding: 20px; border-top: 1px solid #34495e; }
         .main-content { margin-left: 250px; padding: 30px; }
+        /* Style for logged-out container */
+        .container-content { padding-top: 50px; } 
         .kanban-col { min-height: 80vh; }
         .task-card {
-            background: white;
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-bottom: 15px;
+            background: white; border: none; border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px;
             transition: transform 0.2s;
         }
         .task-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
@@ -34,11 +37,26 @@
     </style>
 </head>
 <body>
+    {% if user.is_authenticated %}
     <div class="sidebar">
-        <h4 class="text-center mb-4"><i class="fas fa-layer-group"></i> TaskFlow</h4>
+        <div class="sidebar-brand">
+            <h4><i class="fas fa-layer-group"></i> TaskFlow</h4>
+        </div>
         <a href="{% url 'board' %}" class="active"><i class="fas fa-columns me-2"></i> Board</a>
+        <a href="{% url 'create_task' %}"><i class="fas fa-plus me-2"></i> New Task</a>
+        
+        <div class="sidebar-footer">
+            <small class="d-block text-muted mb-2">Logged in as:</small>
+            <strong class="d-block mb-3 text-white">{{ user.username }}</strong>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-light btn-sm w-100">Logout</button>
+            </form>
+        </div>
     </div>
-    <div class="main-content">
+    {% endif %}
+
+    <div class="{% if user.is_authenticated %}main-content{% else %}container container-content{% endif %}">
         {% block content %}{% endblock %}
     </div>
 </body>
